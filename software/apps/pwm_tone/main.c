@@ -37,9 +37,7 @@ static void pwm_init(void) {
     .base_clock = NRF_PWM_CLK_500kHz,
     .count_mode = NRF_PWM_MODE_UP,
     .load_mode = NRF_PWM_LOAD_COMMON,
-    .step_mode = NRF_PWM_STEP_AUTO,
-    .irq_priority = 1,
-    .top_value = 1
+    .step_mode = NRF_PWM_STEP_AUTO
   };
   nrfx_pwm_init(&PWM_INST, &pwm_config, NULL);
 }

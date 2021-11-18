@@ -78,10 +78,27 @@ int main(void) {
 
   // initialize PWM
   pwm_init();
-  printf("%d", sizeof(NOTES_ARRAY));
+
+  uint i  = 0;
+  bool played_once = false;
+  gpio_config(14, 0);
 
   while(1){
+    while(i<sizeof(NOTES_ARRAY)/2){
+      if (!played_once){
+	play_tone(NOTES_ARRAY[i]);
+	played_once = true;
+      }
+      // nrf_delay_ms(500);
+      printf("%d", !gpio_read(14));
 
+      if (!gpio_read(14)){
+	played_once = false;
+	i++;
+      }
+     
+
+      /*
       if (!gpio_read(14)) {
 	gpio_set(20);
      } else {
@@ -90,12 +107,15 @@ int main(void) {
 	}
      };
       nrf_delay_ms(100);
+      */
+  }
   }
 
+  /*
   for(int i = 0; i < sizeof(NOTES_ARRAY)/2; ++i){
     play_tone(NOTES_ARRAY[i]);
     nrf_delay_ms(500);
-  }
+    }*/
 
   /*
 

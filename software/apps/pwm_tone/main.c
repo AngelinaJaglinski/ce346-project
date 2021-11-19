@@ -63,6 +63,7 @@ static void play_tone(uint16_t frequency) {
 uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440, 391.9954};
 uint16_t BUTTONS_ARRAY[] = {0, 0, 4, 4, 5, 5, 4};
 uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
+char CHAR_ARRAY[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G'};
 
 //initialize led matrix?
 int la1[1];
@@ -94,17 +95,20 @@ int main(void) {
   bool played_once = false;
   gpio_config(14, 0);
   gpio_config(23, 0);
+  led_matrix_init();
 
   while(1){
     while(i<sizeof(NOTES_ARRAY)/2){
+      disp_char(CHAR_ARRAY[i]);
       if (!played_once | !gpio_read(23)){
+	
         play_tone(NOTES_ARRAY[i]);
 	nrf_delay_ms(1000);
 	nrfx_pwm_stop(&PWM_INST, true);
-	//la1[0] = ASCII_ARRAY[i];
-	//led_matrix_init(la1,la2);
-	//nrf_delay_ms(1000);
 	played_once = true;
+	//if (!gpio_read(23)){
+	//  disp_char('X');
+	}
 	}
       nrf_delay_ms(100);
       printf("%d", !gpio_read(14));

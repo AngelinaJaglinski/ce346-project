@@ -59,6 +59,11 @@ static void play_tone(uint16_t frequency) {
 }
 
 uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440, 391.9954};
+uint16_t BUTTONS_ARRAY[] = {0, 0, 4, 4, 5, 5, 4};
+uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
+//map each piano key to a number 0 thru 5
+// see what key the user pressed and compare it to BUTTONS_ARRAY[i]
+// create function to map buttons to nums 0-5
 
   /*
 while(1):
@@ -82,32 +87,31 @@ int main(void) {
   uint i  = 0;
   bool played_once = false;
   gpio_config(14, 0);
+  gpio_config(23, 0);
 
   while(1){
     while(i<sizeof(NOTES_ARRAY)/2){
-      if (!played_once){
-	play_tone(NOTES_ARRAY[i]);
+      if (!played_once | !gpio_read(23)){
+	
+        play_tone(NOTES_ARRAY[i]);
+	nrf_delay_ms(1000);
+	nrfx_pwm_stop(&PWM_INST, true);
 	played_once = true;
-      }
-      // nrf_delay_ms(500);
+	}
+      nrf_delay_ms(100);
       printf("%d", !gpio_read(14));
 
       if (!gpio_read(14)){
-	played_once = false;
+      	played_once = false;
 	i++;
+      }
+
+      if (i==sizeof(NOTES_ARRAY)/2){
+	nrfx_pwm_stop(&PWM_INST, true);
       }
      
 
-      /*
-      if (!gpio_read(14)) {
-	gpio_set(20);
-     } else {
-      if (!gpio_read(23)) {
-	gpio_clear(20);
-	}
-     };
-      nrf_delay_ms(100);
-      */
+    
   }
   }
 

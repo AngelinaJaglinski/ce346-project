@@ -12,6 +12,8 @@
 
 #include "microbit_v2.h"
 #include "gpio.h"
+#include "led_matrix.h"
+
 
 // PWM configuration
 static const nrfx_pwm_t PWM_INST = NRFX_PWM_INSTANCE(0);
@@ -61,6 +63,10 @@ static void play_tone(uint16_t frequency) {
 uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440, 391.9954};
 uint16_t BUTTONS_ARRAY[] = {0, 0, 4, 4, 5, 5, 4};
 uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
+
+//initialize led matrix?
+int la1[1];
+int la2[1];
 //map each piano key to a number 0 thru 5
 // see what key the user pressed and compare it to BUTTONS_ARRAY[i]
 // create function to map buttons to nums 0-5
@@ -92,10 +98,12 @@ int main(void) {
   while(1){
     while(i<sizeof(NOTES_ARRAY)/2){
       if (!played_once | !gpio_read(23)){
-	
         play_tone(NOTES_ARRAY[i]);
 	nrf_delay_ms(1000);
 	nrfx_pwm_stop(&PWM_INST, true);
+	//la1[0] = ASCII_ARRAY[i];
+	//led_matrix_init(la1,la2);
+	//nrf_delay_ms(1000);
 	played_once = true;
 	}
       nrf_delay_ms(100);

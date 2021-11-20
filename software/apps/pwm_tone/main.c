@@ -15,6 +15,9 @@
 #include "led_matrix.h"
 
 
+#define ROW_KEY EDGE_P20
+#define COL_KEY EDGE_P16
+
 // PWM configuration
 static const nrfx_pwm_t PWM_INST = NRFX_PWM_INSTANCE(0);
 
@@ -64,6 +67,15 @@ uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440, 391.
 uint16_t BUTTONS_ARRAY[] = {0, 0, 4, 4, 5, 5, 4};
 uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
 char CHAR_ARRAY[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G'};
+bool key_pressed[32];
+
+/*
+while(1){
+  read all keys;
+  if key is pressed, put true in the key_pressed array;
+ }
+*/
+
 
 //initialize led matrix?
 int la1[1];
@@ -97,8 +109,25 @@ int main(void) {
   gpio_config(23, 0);
   led_matrix_init();
 
+  nrf_gpio_pin_dir_set(ROW_KEY, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(COL_KEY,  NRF_GPIO_PIN_DIR_OUTPUT);
+
+  nrf_gpio_pin_write(ROW_KEY, 1);
+  nrf_gpio_pin_write(COL_KEY, 1);
+ 
+
+
   while(1){
+
     while(i<sizeof(NOTES_ARRAY)/2){
+
+    uint32_t row_key_value = nrf_gpio_pin_read(ROW_KEY);
+    uint32_t col_key_value = nrf_gpio_pin_read(COL_KEY);
+    printf("%ld\n", row_key_value);
+    printf("%ld\n", col_key_value);
+    printf("after\n");
+  
+      
       disp_char(CHAR_ARRAY[i]);
       if (!played_once | !gpio_read(23)){
 	
@@ -108,7 +137,7 @@ int main(void) {
 	played_once = true;
 	//if (!gpio_read(23)){
 	//  disp_char('X');
-	}
+	//}
 	}
       nrf_delay_ms(100);
       printf("%d", !gpio_read(14));

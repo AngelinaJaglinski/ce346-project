@@ -15,8 +15,21 @@
 #include "led_matrix.h"
 
 
-#define ROW_KEY EDGE_P20
-#define COL_KEY EDGE_P16
+#define OUTPUT0 EDGE_P0
+#define OUTPUT1 EDGE_P1
+#define OUTPUT2 EDGE_P2
+#define OUTPUT3 EDGE_P5
+#define OUTPUT4 EDGE_P8
+#define OUTPUT5 EDGE_P9
+#define OUTPUT6 EDGE_P11
+#define OUTPUT7 EDGE_P12
+
+#define INPUT0 EDGE_P13
+#define INPUT1 EDGE_P14
+#define INPUT2 EDGE_P15
+#define INPUT3 EDGE_P16
+
+
 
 // PWM configuration
 static const nrfx_pwm_t PWM_INST = NRFX_PWM_INSTANCE(0);
@@ -64,7 +77,7 @@ static void play_tone(uint16_t frequency) {
 }
 
 uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440, 391.9954};
-uint16_t BUTTONS_ARRAY[] = {0, 0, 4, 4, 5, 5, 4};
+uint16_t BUTTONS_ARRAY[] = {8, 8, 15, 15, 17, 17, 15};
 uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
 char CHAR_ARRAY[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G'};
 bool key_pressed[32];
@@ -96,6 +109,121 @@ while(1):
 play_next_note():
 pops first note in notes linked list
   */
+
+
+void init_pins() {
+  nrf_gpio_pin_dir_set(OUTPUT0, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT1, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT2, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT3, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT4, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT5, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT6, NRF_GPIO_PIN_DIR_OUTPUT);
+  nrf_gpio_pin_dir_set(OUTPUT7, NRF_GPIO_PIN_DIR_OUTPUT);
+
+  nrf_gpio_pin_dir_set(INPUT0, NRF_GPIO_PIN_DIR_INPUT);
+  nrf_gpio_pin_dir_set(INPUT1, NRF_GPIO_PIN_DIR_INPUT);
+  nrf_gpio_pin_dir_set(INPUT2, NRF_GPIO_PIN_DIR_INPUT);
+  nrf_gpio_pin_dir_set(INPUT3, NRF_GPIO_PIN_DIR_INPUT);
+
+  nrf_gpio_pin_write(OUTPUT0, 1);
+  nrf_gpio_pin_write(OUTPUT1, 1);
+  nrf_gpio_pin_write(OUTPUT2, 1);
+  nrf_gpio_pin_write(OUTPUT3, 1);
+  nrf_gpio_pin_write(OUTPUT4, 1);
+  nrf_gpio_pin_write(OUTPUT5, 1);
+  nrf_gpio_pin_write(OUTPUT6, 1);
+  nrf_gpio_pin_write(OUTPUT7, 1);
+  nrf_gpio_pin_write(INPUT0, 1);
+  nrf_gpio_pin_write(INPUT1, 1);
+  nrf_gpio_pin_write(INPUT2, 1);
+  nrf_gpio_pin_write(INPUT3, 1);
+  
+
+}
+
+int key_helper(uint i) {
+  if (nrf_gpio_pin_read(INPUT0) == 1) {
+    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
+      return 0;
+    }
+    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
+      return 1;
+    }
+    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
+      return 2;
+    }
+    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
+    }
+  }
+
+  else if (nrf_gpio_pin_read(INPUT1) == 1) {
+    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
+    }
+  }
+
+  else if (nrf_gpio_pin_read(INPUT2) == 1) {
+    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
+    }
+  }
+
+  else if (nrf_gpio_pin_read(INPUT3) == 1) {
+    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
+    }
+    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
+    }
+  }
+  
+  
+}
   
 int main(void) {
   printf("Board started!\n");
@@ -109,11 +237,10 @@ int main(void) {
   gpio_config(23, 0);
   led_matrix_init();
 
-  nrf_gpio_pin_dir_set(ROW_KEY, NRF_GPIO_PIN_DIR_OUTPUT);
-  nrf_gpio_pin_dir_set(COL_KEY,  NRF_GPIO_PIN_DIR_OUTPUT);
-
-  nrf_gpio_pin_write(ROW_KEY, 1);
-  nrf_gpio_pin_write(COL_KEY, 1);
+  //init_pins();
+   
+  // nrf_gpio_pin_write(ROW_KEY, 1);
+  //nrf_gpio_pin_write(COL_KEY, 1);
  
 
 
@@ -121,14 +248,17 @@ int main(void) {
 
     while(i<sizeof(NOTES_ARRAY)/2){
 
-    uint32_t row_key_value = nrf_gpio_pin_read(ROW_KEY);
-    uint32_t col_key_value = nrf_gpio_pin_read(COL_KEY);
-    printf("%ld\n", row_key_value);
-    printf("%ld\n", col_key_value);
+      /*
+    uint32_t output_value = nrf_gpio_pin_read(OUTPUT0);
+    uint32_t input_value  = nrf_gpio_pin_read(INPUT0);
+    printf("%ld\n", output_value);
+    printf("%ld\n", input_value);
     printf("after\n");
+      */
   
       
       disp_char(CHAR_ARRAY[i]);
+      // instead of !gpio_read(23), we compare key_helper() to buttons_array at i
       if (!played_once | !gpio_read(23)){
 	
         play_tone(NOTES_ARRAY[i]);
@@ -155,6 +285,8 @@ int main(void) {
     
   }
   }
+
+  
 
   /*
   for(int i = 0; i < sizeof(NOTES_ARRAY)/2; ++i){

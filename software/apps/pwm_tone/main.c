@@ -12,6 +12,7 @@
 
 #include "microbit_v2.h"
 #include "gpio.h"
+#include "app_timer.h"
 #include "led_matrix.h"
 
 
@@ -29,7 +30,7 @@
 #define INPUT2 EDGE_P15
 #define INPUT3 EDGE_P16
 
-
+APP_TIMER_DEF(APP_TIMER);
 
 // PWM configuration
 static const nrfx_pwm_t PWM_INST = NRFX_PWM_INSTANCE(0);
@@ -76,11 +77,29 @@ static void play_tone(uint16_t frequency) {
   nrfx_pwm_simple_playback(&PWM_INST, &pwm_sequence, 1, NRFX_PWM_FLAG_LOOP);
 }
 
-uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440, 391.9954};
-int  BUTTONS_ARRAY[] = {8, 8, 15, 15, 17, 17, 15};
-uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
-char CHAR_ARRAY[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G'};
+uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440,
+			  391.9954, 349.2282, 349.2282, 329.6276, 329.6276,
+			  293.6648, 293.6648, 261.6256, 391.9954, 391.9954,
+			  349.2282, 349.2282, 329.6276, 329.6276, 293.6648,
+			  391.9954, 391.9954, 349.2282, 349.2282, 329.6276,
+			  329.6276, 293.6648, 261.6256, 261.6256, 391.9954,
+			  391.9954, 440, 440, 391.9954, 349.2282, 349.2282,
+			  329.6276, 329.6276, 293.6648, 293.6648, 261.6256};
+int  BUTTONS_ARRAY[] = {8, 8, 15, 15, 17, 17, 15, 13, 13, 12, 12, 10, 10, 8,
+			15, 15, 13, 13, 12, 12, 10, 15, 15, 13, 13, 12, 12,
+			10, 8, 8, 15, 15, 17, 17, 15, 13, 13, 12, 12, 10,
+			10, 8};
+//uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
+char CHAR_ARRAY[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G', 'F', 'F', 'E', 'E',
+		     'D', 'D', 'C', 'G', 'G', 'F', 'F', 'E', 'E', 'D', 'G',
+		     'G', 'F', 'F', 'E', 'E', 'D', 'C', 'C', 'G', 'G', 'A',
+		     'A', 'G', 'F', 'F', 'E', 'E', 'D', 'D', 'C'};
 bool key_pressed[32];
+uint32_t outputs[] = {OUTPUT0, OUTPUT1, OUTPUT2, OUTPUT3, OUTPUT4, OUTPUT5, OUTPUT6, OUTPUT7};
+bool key_bool[32] = {false};
+int i = 0;
+int key_num = 32;
+
 
 /*
 while(1){
@@ -126,6 +145,7 @@ void init_pins() {
   nrf_gpio_pin_dir_set(INPUT2, NRF_GPIO_PIN_DIR_INPUT);
   nrf_gpio_pin_dir_set(INPUT3, NRF_GPIO_PIN_DIR_INPUT);
 
+  /*
   nrf_gpio_pin_write(OUTPUT0, 1);
   nrf_gpio_pin_write(OUTPUT1, 1);
   nrf_gpio_pin_write(OUTPUT2, 1);
@@ -134,127 +154,48 @@ void init_pins() {
   nrf_gpio_pin_write(OUTPUT5, 1);
   nrf_gpio_pin_write(OUTPUT6, 1);
   nrf_gpio_pin_write(OUTPUT7, 1);
+  */
 }
 
 
-int key_helper() {
-  if (nrf_gpio_pin_read(INPUT0) == 1) {
-    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
-      return 0;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
-      return 1;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
-      return 2;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
-      return 3;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
-      return 4;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
-      return 5;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
-      return 6;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
-      return 7;
-    }
-  }
-
-  else if (nrf_gpio_pin_read(INPUT1) == 1) {
-    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
-      return 8;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
-      return 9;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
-      return 10;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
-      return 11;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
-      return 12;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
-      return 13;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
-      return 14;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
-      return 15;
-    }
-  }
-
-  else if (nrf_gpio_pin_read(INPUT2) == 1) {
-    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
-      return 16;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
-      return 17;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
-      return 18;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
-      return 19;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
-      return 20;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
-      return 21;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
-      return 22;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
-      return 23;
-    }
-  }
-
-  else if (nrf_gpio_pin_read(INPUT3) == 1) {
-    if (nrf_gpio_pin_read(OUTPUT0) == 1) {
-      return 24;
-
-    }
-    else if (nrf_gpio_pin_read(OUTPUT1) == 1) {
-      return 25;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT2) == 1) {
-      return 26;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT3) == 1) {
-      return 27;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT4) == 1) {
-      return 28;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT5) == 1) {
-      return 29;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT6) == 1) {
-      return 30;
-    }
-    else if (nrf_gpio_pin_read(OUTPUT7) == 1) {
-      return 31;
+void key_helper(void* _unused) {
+  for (int j = 0; j < 8; j++) {
+    if (j != i) {
+      nrf_gpio_pin_write(outputs[j], 0);	
     }
   }
   
-  return 32;
+  nrf_gpio_pin_write(outputs[i], 1);
+  if (nrf_gpio_pin_read(INPUT0) == 1) {
+    key_num = i;
+  }
+  else if (nrf_gpio_pin_read(INPUT1) == 1) {
+    key_num = 8 + i;
+  }
+  else if (nrf_gpio_pin_read(INPUT2) == 1) {
+    key_num = 16 + i;
+  }
+  else if (nrf_gpio_pin_read(INPUT3) == 1) {
+    key_num = 24 + i;
+  }
+  
+  else {
+    if (i == 7) {
+      key_num = 32;
+    }
+  }
+  i = i+1;
+  if (i > 7) {
+    i = 0;
+  }
+  //printf("%d\n", key_num);
 }
 
-bool bool_helper(int key_int, int button_int){
-  if (key_int == 32){
+bool bool_helper(int button_int){
+  if (key_num == 32){
     return false;
   } else {
-    if (key_int != button_int){
+    if (key_num != button_int){
       return true;
     } else {
       return false;
@@ -262,44 +203,6 @@ bool bool_helper(int key_int, int button_int){
   }
   
 }
-
-
-
-  /*
-
-  // C4 (Middle C)
-  play_tone(261.6256);
-  nrf_delay_ms(1000);
-
-  // D4
-  play_tone(293.6648);
-  nrf_delay_ms(1000);
-
-  // E4
-  play_tone(329.6276);
-  nrf_delay_ms(1000);
-
-  //F4
-  play_tone(349.2282);
-  nrf_delay_ms(1000);
-
-  //G4
-  play_tone(391.9954);
-  nrf_delay_ms(1000);
-
-  //A4
-  play_tone(440);
-  nrf_delay_ms(1000);
-
-  //B4
-  play_tone(493.8833);
-  nrf_delay_ms(1000);
-  
-  //C5
-  play_tone(523.2511);
-  nrf_delay_ms(1000);
-
-  */
   
 int main(void) {
   printf("Board started!\n");
@@ -307,18 +210,15 @@ int main(void) {
   // initialize PWM
   pwm_init();
 
-  uint i  = 0;
+  uint i2  = 0;
   bool played_once = false;
-  //gpio_config(14, 0);
-  //gpio_config(23, 0);
   led_matrix_init();
 
   init_pins();
-  
-   
-  // nrf_gpio_pin_write(ROW_KEY, 1);
-  //nrf_gpio_pin_write(COL_KEY, 1);
-  
+  //app_timer_init();
+
+  app_timer_create(&APP_TIMER, APP_TIMER_MODE_REPEATED, key_helper);
+  app_timer_start(APP_TIMER, 32768/1000, NULL);
 
   //turn on one output pin
   //delay
@@ -328,24 +228,12 @@ int main(void) {
   //delay
   //repeat
 
-  
-
-  /*
   while(1){
-
-    while(i<sizeof(NOTES_ARRAY)/2){
-      
-
-   
-
-      
-      
-      disp_char(CHAR_ARRAY[i]);
-      // instead of !gpio_read(23), we compare key_helper() to buttons_array at i
-      if (!played_once | bool_helper(key_helper(), BUTTONS_ARRAY[i])) {
-	
-        play_tone(NOTES_ARRAY[i]);
-	nrf_delay_ms(1000);
+    while(i2<sizeof(NOTES_ARRAY)/2){
+      disp_char(CHAR_ARRAY[i2]);
+      if (!played_once | bool_helper(BUTTONS_ARRAY[i2])) {
+        play_tone(NOTES_ARRAY[i2]);
+	nrf_delay_ms(500);
 	nrfx_pwm_stop(&PWM_INST, true);
 	played_once = true;
 	//if (!gpio_read(23)){
@@ -353,35 +241,31 @@ int main(void) {
 	//}
 	}
       nrf_delay_ms(100);
-      // printf("%d", !gpio_read(14));
 
-      if (key_helper() == BUTTONS_ARRAY[i]){
+      if (key_num == BUTTONS_ARRAY[i2]){
       	played_once = false;
-	i++;
+	i2++;
       }
 
-      if (i==sizeof(NOTES_ARRAY)/2){
+      if (i2==sizeof(NOTES_ARRAY)/2){
 	nrfx_pwm_stop(&PWM_INST, true);
       }
-     
-
-    
+    }
   }
-  }
-  */
  
 
 
 
 // set one output high(?)
 //play keys and read all inputs
+  /*
   while(1) {
       nrf_gpio_pin_write(OUTPUT2, 1);
       nrf_delay_ms(100);
-      uint32_t input1 = nrf_gpio_pin_read(OUTPUT0);
-      uint32_t input2 = nrf_gpio_pin_read(OUTPUT1);
-      uint32_t input3 = nrf_gpio_pin_read(OUTPUT2);
-      uint32_t input4 = nrf_gpio_pin_read(OUTPUT3);
+      uint32_t input1 = nrf_gpio_pin_read(INPUT0);
+      uint32_t input2 = nrf_gpio_pin_read(INPUT1);
+      uint32_t input3 = nrf_gpio_pin_read(INPUT2);
+      uint32_t input4 = nrf_gpio_pin_read(INPUT3);
       printf("%d %d %d %d\n", input1, input2, input3, input4);
 
       // start with all outputs low, set one to high
@@ -390,6 +274,7 @@ int main(void) {
       // set next output high and repeat
 
   }
+  */
 
 
 

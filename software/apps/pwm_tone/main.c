@@ -77,7 +77,11 @@ static void play_tone(uint16_t frequency) {
   nrfx_pwm_simple_playback(&PWM_INST, &pwm_sequence, 1, NRFX_PWM_FLAG_LOOP);
 }
 
-uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440,
+//int song_index = 1;
+
+//When choosing song, get rid of number in array names for the one we are playing and add number to song we are replacing.
+//Twinkle Twinkle
+uint16_t NOTES_ARRAY1[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440,
 			  391.9954, 349.2282, 349.2282, 329.6276, 329.6276,
 			  293.6648, 293.6648, 261.6256, 391.9954, 391.9954,
 			  349.2282, 349.2282, 329.6276, 329.6276, 293.6648,
@@ -85,15 +89,27 @@ uint16_t NOTES_ARRAY[] = {261.6256, 261.6256, 391.9954, 391.9954, 440, 440,
 			  329.6276, 293.6648, 261.6256, 261.6256, 391.9954,
 			  391.9954, 440, 440, 391.9954, 349.2282, 349.2282,
 			  329.6276, 329.6276, 293.6648, 293.6648, 261.6256};
-int  BUTTONS_ARRAY[] = {8, 8, 15, 15, 17, 17, 15, 13, 13, 12, 12, 10, 10, 8,
-			15, 15, 13, 13, 12, 12, 10, 15, 15, 13, 13, 12, 12,
-			10, 8, 8, 15, 15, 17, 17, 15, 13, 13, 12, 12, 10,
-			10, 8};
-//uint16_t ASCII_ARRAY[] = {67, 67, 71, 71, 65, 65, 71};
-char CHAR_ARRAY[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G', 'F', 'F', 'E', 'E',
-		     'D', 'D', 'C', 'G', 'G', 'F', 'F', 'E', 'E', 'D', 'G',
-		     'G', 'F', 'F', 'E', 'E', 'D', 'C', 'C', 'G', 'G', 'A',
-		     'A', 'G', 'F', 'F', 'E', 'E', 'D', 'D', 'C'};
+int  BUTTONS_ARRAY1[] = {7, 7, 14, 14, 16, 16, 14, 12, 12, 11, 11, 9, 9, 7,
+			14, 14, 12, 12, 11, 11, 9, 14, 14, 12, 12, 11, 11,
+			9, 7, 7, 14, 14, 16, 16, 14, 12, 12, 11, 11, 9,
+			9, 7};
+char CHAR_ARRAY1[] = {'C', 'C', 'G', 'G', 'A', 'A', 'G', 'F', 'F', 'E', 'E',
+		    'D', 'D', 'C', 'G', 'G', 'F', 'F', 'E', 'E', 'D', 'G',
+		    'G', 'F', 'F', 'E', 'E', 'D', 'C', 'C', 'G', 'G', 'A',
+		    'A', 'G', 'F', 'F', 'E', 'E', 'D', 'D', 'C'};
+
+//Mary had a Little Lamb
+uint16_t NOTES_ARRAY[] = {329.6276, 293.6648, 261.6256, 293.6648, 329.6276,
+		       329.6276, 329.6276, 293.6648, 293.6648, 293.6648,
+		       329.6276, 391.9954, 391.9954, 329.6276, 293.6648,
+		       261.6256, 293.6648, 329.6276, 329.6276, 329.6276,
+		       329.6276, 293.6648, 293.6648, 329.6276, 293.6648,
+		       261.6276};
+int BUTTONS_ARRAY[] = {11, 9, 7, 9, 11, 11, 11, 9, 9, 9, 11, 14, 14, 11,
+			9, 7, 9, 11, 11, 11, 11, 9, 9, 11, 9, 7};
+char CHAR_ARRAY[] = {'E', 'D', 'C', 'D', 'E', 'E', 'E', 'D', 'D', 'D', 'E',
+		      'G', 'G', 'E', 'D', 'C', 'D', 'E', 'E', 'E', 'E', 'D',
+		      'D', 'E', 'D', 'C'};
 bool key_pressed[32];
 uint32_t outputs[] = {OUTPUT0, OUTPUT1, OUTPUT2, OUTPUT3, OUTPUT4, OUTPUT5, OUTPUT6, OUTPUT7};
 bool key_bool[32] = {false};
@@ -145,18 +161,7 @@ void init_pins() {
   nrf_gpio_pin_dir_set(INPUT2, NRF_GPIO_PIN_DIR_INPUT);
   nrf_gpio_pin_dir_set(INPUT3, NRF_GPIO_PIN_DIR_INPUT);
 
-  /*
-  nrf_gpio_pin_write(OUTPUT0, 1);
-  nrf_gpio_pin_write(OUTPUT1, 1);
-  nrf_gpio_pin_write(OUTPUT2, 1);
-  nrf_gpio_pin_write(OUTPUT3, 1);
-  nrf_gpio_pin_write(OUTPUT4, 1);
-  nrf_gpio_pin_write(OUTPUT5, 1);
-  nrf_gpio_pin_write(OUTPUT6, 1);
-  nrf_gpio_pin_write(OUTPUT7, 1);
-  */
 }
-
 
 void key_helper(void* _unused) {
   for (int j = 0; j < 8; j++) {
@@ -226,8 +231,8 @@ int main(void) {
   //delay optional
   //turn off output pin
   //delay
-  //repeat
-
+  //repeat   
+  
   while(1){
     while(i2<sizeof(NOTES_ARRAY)/2){
       disp_char(CHAR_ARRAY[i2]);
@@ -240,7 +245,7 @@ int main(void) {
 	//  disp_char('X');
 	//}
 	}
-      nrf_delay_ms(25);
+      nrf_delay_ms(20);
 
       if (key_num == BUTTONS_ARRAY[i2]){
       	//played_once = false;
@@ -255,9 +260,6 @@ int main(void) {
       }
     }
   }
- 
-
-
 
 // set one output high(?)
 //play keys and read all inputs
@@ -278,20 +280,6 @@ int main(void) {
 
   }
   */
-
-
-
-
-  
-
-
-  
-
-
-
-  
-
-
   // Stop all noises
   nrfx_pwm_stop(&PWM_INST, true);
 }

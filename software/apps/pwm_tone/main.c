@@ -211,7 +211,7 @@ int main(void) {
   pwm_init();
 
   uint i2  = 0;
-  bool played_once = false;
+  //bool played_once = false;
   led_matrix_init();
 
   init_pins();
@@ -231,19 +231,22 @@ int main(void) {
   while(1){
     while(i2<sizeof(NOTES_ARRAY)/2){
       disp_char(CHAR_ARRAY[i2]);
-      if (!played_once | bool_helper(BUTTONS_ARRAY[i2])) {
-        play_tone(NOTES_ARRAY[i2]);
+      if (bool_helper(BUTTONS_ARRAY[i2])) {
+        play_tone(55.0);
 	nrf_delay_ms(500);
 	nrfx_pwm_stop(&PWM_INST, true);
-	played_once = true;
+	//played_once = true;
 	//if (!gpio_read(23)){
 	//  disp_char('X');
 	//}
 	}
-      nrf_delay_ms(100);
+      nrf_delay_ms(25);
 
       if (key_num == BUTTONS_ARRAY[i2]){
-      	played_once = false;
+      	//played_once = false;
+	play_tone(NOTES_ARRAY[i2]);
+	nrf_delay_ms(500);
+	nrfx_pwm_stop(&PWM_INST, true);
 	i2++;
       }
 

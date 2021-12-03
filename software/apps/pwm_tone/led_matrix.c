@@ -118,7 +118,7 @@ void led_matrix_init(void) {
   // initialize timer(s) (Part 3 and onwards)
   app_timer_init();
   app_timer_create(&my_timer_1, APP_TIMER_MODE_REPEATED, display_leds);
-  app_timer_start(my_timer_1, 65, NULL);
+  app_timer_start(my_timer_1, 32768/1000, NULL);
 
   // set default state for the LED display (Part 4 and onwards)
 }
